@@ -235,4 +235,305 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 </script>
+<style>/* appoinment create */
+ :root {
+        --navy: #1e3a5f;
+        --gold: #d4931d;
+        --yellow: #fcd34d;
+        --charcoal: #2d3748;
+        --blue-primary: #003d82;
+        --blue-bright: #0066cc;
+    }
+
+    /* Time Slot Styling */
+    .time-slot-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 12px;
+        padding: 20px;
+        background: #f8f9fa;
+        border-radius: 12px;
+        min-height: 200px;
+        border: 2px solid #d1d5db;
+    }
+    
+    @media (max-width: 768px) {
+        .time-slot-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+    
+    .time-slot-btn {
+        position: relative;
+        padding: 16px 12px;
+        border: 2px solid #0066cc;
+        background: white;
+        color: var(--charcoal);
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        text-align: center;
+        font-size: 14px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 4px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+    
+    .time-slot-btn:hover {
+        background: #e3f2fd;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 8px rgba(0, 102, 204, 0.15);
+    }
+    
+    .time-slot-btn.selected {
+        background: #0066cc !important;
+        color: white !important;
+        border-color: #0066cc !important;
+        box-shadow: 0 4px 12px rgba(0, 102, 204, 0.3);
+    }
+    
+    .time-slot-btn.selected .slot-icon,
+    .time-slot-btn.selected .slot-status {
+        color: white !important;
+    }
+    
+    .time-slot-disabled {
+        padding: 16px 12px;
+        border: 2px solid #e5e7eb;
+        background: #f9fafb;
+        color: #9ca3af;
+        border-radius: 8px;
+        cursor: not-allowed;
+        text-align: center;
+        font-size: 14px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 4px;
+        opacity: 0.6;
+    }
+    
+    .slot-time {
+        font-weight: 700;
+        font-size: 16px;
+    }
+    
+    .slot-status {
+        font-size: 11px;
+        font-weight: 600;
+        color: #0066cc;
+    }
+    
+    .slot-icon {
+        font-size: 14px;
+        color: #0066cc;
+        margin-bottom: 2px;
+    }
+    
+    .empty-state {
+        grid-column: 1 / -1;
+        text-align: center;
+        padding: 40px;
+        color: #718096;
+    }
+    
+    .empty-state i {
+        font-size: 48px;
+        color: #93c5fd;
+        margin-bottom: 16px;
+    }
+    
+    .loading-state {
+        grid-column: 1 / -1;
+        text-align: center;
+        padding: 40px;
+        color: #0066cc;
+    }
+    
+    .loading-state i {
+        font-size: 48px;
+        margin-bottom: 16px;
+        animation: spin 1s linear infinite;
+    }
+    
+    @keyframes spin {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+    
+    /* Doctor Card */
+    .doctor-card {
+        background: #fef3c7;
+        border: 2px solid #f59e0b;
+        border-radius: 8px;
+        padding: 20px;
+        margin: 20px 0;
+    }
+    
+    .doctor-avatar {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        background: #1e3a5f;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 20px;
+        font-weight: 700;
+        margin-right: 16px;
+    }
+    
+    .doctor-info {
+        display: flex;
+        align-items: center;
+    }
+    
+    /* Form Enhancements */
+    .form-label {
+        display: block;
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--charcoal);
+        margin-bottom: 8px;
+    }
+    
+    .form-label i {
+        color: #f59e0b;
+        margin-right: 8px;
+    }
+    
+    .clinic-hours-badge {
+        display: inline-block;
+        background: #fef3c7;
+        color: var(--charcoal);
+        padding: 6px 12px;
+        border-radius: 999px;
+        font-size: 12px;
+        font-weight: 600;
+        border: 1px solid #f59e0b;
+    }
+    
+    .section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 12px;
+    }
+    
+    /* Success Notification */
+    .notification {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: #0066cc;
+        color: white;
+        padding: 16px 24px;
+        border-radius: 8px;
+        box-shadow: 0 10px 20px rgba(0, 102, 204, 0.3);
+        z-index: 1000;
+        animation: slideIn 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    .notification.error {
+        background: #dc2626;
+        box-shadow: 0 10px 20px rgba(220, 38, 38, 0.3);
+    }
+    
+    @keyframes slideIn {
+        from {
+            transform: translateX(400px);
+            opacity: 0;
+        }
+        to {
+            transform: translateX(0);
+            opacity: 1;
+        }
+    }
+    
+    /* Input Focus Effects */
+    select:focus,
+    input:focus,
+    textarea:focus {
+        outline: none;
+        border-color: #0066cc;
+        box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.1);
+    }
+
+    /* Card styling */
+    .form-card {
+        background: white;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        border: 1px solid #e5e7eb;
+    }
+
+    /* Header styling */
+    .page-header {
+        background: #2c3e50;
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 24px;
+    }
+
+    .page-header h2 {
+        color: white;
+    }
+
+    .page-header h2 i {
+        color: #fbbf24;
+    }
+
+    .page-header p {
+        color: rgba(255, 255, 255, 0.9);
+    }
+
+    /* Input styling */
+    input[type="date"],
+    select,
+    textarea {
+        border: 1px solid #d1d5db;
+        transition: all 0.2s;
+    }
+
+    input[type="date"]:hover,
+    select:hover,
+    textarea:hover {
+        border-color: #9ca3af;
+    }
+
+    /* Button styling */
+    .btn-back {
+        background: #f3f4f6;
+        color: var(--charcoal);
+        border: 1px solid #d1d5db;
+    }
+
+    .btn-back:hover {
+        background: #e5e7eb;
+    }
+
+    .btn-primary {
+        background: #0066cc;
+        border: none;
+    }
+
+    .btn-primary:hover {
+        background: #0052a3;
+    }
+
+    .btn-primary i {
+        color: white;
+    }
+
+    /* Error messages */
+    .error-box {
+        background: #fef2f2;
+        border-left: 4px solid #ef4444;
+ }</style>
+
 @endsection
